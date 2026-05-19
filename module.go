@@ -326,6 +326,17 @@ func getAuthKey(name string, app *App) (string, error) {
 		app.logger.Warn("Relying on TS_AUTHKEY_{HOST} env var is deprecated. Set caddy config instead.", zap.Any("host", name))
 		return authKey, nil
 	}
+	
+	keyfile := os.Getenv("TS_AUTHHKEY_FILE")
+	if keyfile != "" {
+		content, err := os.ReadFile(keyfile)
+		if err != nil {
+			fmt.Printf("Error reading TS_AUTHHKEY_FILE: %v\n", err)
+			return "", err
+		}
+		
+		return strings.TrimSpace(string(content)), nil	
+	}
 
 	return os.Getenv("TS_AUTHKEY"), nil
 }
